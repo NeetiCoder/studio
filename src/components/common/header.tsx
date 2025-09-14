@@ -2,7 +2,8 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import * as React from 'react';
 import { Menu, X, Rocket } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
@@ -16,9 +17,28 @@ const navLinks = [
 export function AppHeader() {
   const pathname = usePathname();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const headerRef = React.useRef<HTMLElement>(null);
+
+  useEffect(() => {
+    if (headerRef.current) {
+      document.body.style.paddingTop = `${headerRef.current.offsetHeight}px`;
+    }
+    
+    const handleResize = () => {
+      if (headerRef.current) {
+        document.body.style.paddingTop = `${headerRef.current.offsetHeight}px`;
+      }
+    };
+
+    window.addEventListener('resize', handleResize);
+    return () => {
+      window.removeEventListener('resize', handleResize);
+      document.body.style.paddingTop = '0';
+    }
+  }, []);
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 glassmorphism">
+    <header ref={headerRef} className="fixed top-0 left-0 right-0 z-50 glassmorphism">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           <Link href="/" className="flex items-center gap-2 text-2xl font-bold font-headline text-white">

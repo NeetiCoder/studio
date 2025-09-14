@@ -2,7 +2,7 @@ import { PlanClientPage } from "./client-page";
 
 export default function PlanPage() {
     return (
-        <div className="min-h-screen pt-24 pb-12 bg-background">
+        <div className="min-h-screen py-12 bg-background">
             <div className="container mx-auto px-4">
                 <header className="text-center mb-12">
                     <h1 className="font-headline text-5xl md:text-6xl font-bold tracking-tighter animated-gradient-text">
