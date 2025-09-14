@@ -43,7 +43,7 @@ export default function DashboardPage() {
               className="glassmorphism hover:border-accent transition-all duration-300 transform-style-3d hover:-translate-y-2 hover:[transform:rotateY(10deg)]"
             >
               <CardHeader className="flex flex-row items-center justify-between pb-2">
-                <CardTitle className="text-xl font-bold font-headline">{goal.title}</CardTitle>
+                <CardTitle className="text-xl font-bold font-headline"><div>{goal.title}</div></CardTitle>
                 {goal.icon}
               </CardHeader>
               <CardContent className="flex flex-col items-center gap-6">

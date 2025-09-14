@@ -42,7 +42,7 @@ export function StrategyDisplay({ strategy, isLoading }: StrategyDisplayProps) {
                             <div className="flex-shrink-0 w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center">
                                 <Lightbulb className="w-5 h-5 text-primary" />
                             </div>
-                            <CardTitle className="text-lg text-gray-200 pt-1">{step.replace(/^\d+\.\s*/, '')}</CardTitle>
+                            <CardTitle className="text-lg text-gray-200 pt-1"><div>{step.replace(/^\d+\.\s*/, '')}</div></CardTitle>
                         </CardHeader>
                     </Card>
                 ))}
