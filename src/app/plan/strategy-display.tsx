@@ -1,8 +1,10 @@
+
 'use client';
 
 import type { GenerateStrategySuggestionsOutput } from "@/ai/flows/generate-strategy-suggestions";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Lightbulb, Rocket } from "lucide-react";
+import React from "react";
 
 type StrategyDisplayProps = {
     strategy: GenerateStrategySuggestionsOutput | null;
@@ -33,7 +35,7 @@ const MarkdownRenderer = ({ content }: { content: string }) => {
         }
         if (line.includes('**')) {
              const parts = line.split('**');
-             return <p>{parts.map((part, i) => i % 2 === 1 ? <strong className="font-bold text-white">{part}</strong> : part)}</p>
+             return <p>{parts.map((part, i) => i % 2 === 1 ? <strong key={i} className="font-bold text-white">{part}</strong> : <React.Fragment key={i}>{part}</React.Fragment>)}</p>
         }
 
         return <p className="text-gray-400 my-1">{line}</p>;
