@@ -13,7 +13,6 @@ import { useToast } from '@/hooks/use-toast';
 import { Loader2, Zap } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useState } from 'react';
-import { readStreamableValue } from 'ai/rsc';
 
 const formSchema = z.object({
   goalType: z.string().min(2, {
@@ -27,7 +26,7 @@ const formSchema = z.object({
 });
 
 type GoalFormProps = {
-    onStrategyUpdate: (strategyChunk: string) => void;
+    onStrategyUpdate: (strategy: string) => void;
     setIsLoading: (isLoading: boolean) => void;
     isLoading: boolean;
     clearStrategy: () => void;
@@ -51,33 +50,19 @@ export function GoalForm({ onStrategyUpdate, setIsLoading, isLoading, clearStrat
     setIsLoading(true);
     clearStrategy();
     
-    try {
-        const { output } = await handleGoalSubmission(values);
-        
-        let fullResponse = "";
-        for await (const delta of readStreamableValue(output)) {
-            if (delta && typeof delta.strategySuggestions === 'string') {
-                fullResponse += delta.strategySuggestions;
-                onStrategyUpdate(fullResponse);
-            }
-             if (delta && typeof delta.error === 'string') {
-                toast({
-                    title: "Error",
-                    description: delta.error,
-                    variant: 'destructive',
-                });
-                break;
-            }
-        }
-    } catch(e) {
+    const result = await handleGoalSubmission(values);
+
+    if (result.error) {
         toast({
             title: "Error",
-            description: "There was an error generating your strategy. Please try again.",
+            description: result.error,
             variant: 'destructive',
         });
-    } finally {
-        setIsLoading(false);
+    } else if (result.strategySuggestions) {
+        onStrategyUpdate(result.strategySuggestions);
     }
+    
+    setIsLoading(false);
   }
 
   const getPlaceholder = () => {
