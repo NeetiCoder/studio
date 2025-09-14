@@ -3,29 +3,22 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import * as React from 'react';
-import { Menu, X, Rocket, LogOut } from 'lucide-react';
+import { Menu, X, Rocket } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
-import { checkUserSession, handleSignOut } from '@/app/auth/actions';
-import { useRouter } from 'next/navigation';
 
 const navLinks = [
   { href: '/', label: 'Home' },
   { href: '/plan', label: 'Create Plan' },
   { href: '/dashboard', label: 'Dashboard' },
+  { href: '/roadmap', label: 'Roadmap' },
 ];
 
 export function AppHeader() {
   const pathname = usePathname();
-  const router = useRouter();
   const [isMenuOpen, setIsMenuOpen] = React.useState(false);
-  const [isLoggedIn, setIsLoggedIn] = React.useState(false);
   const headerRef = React.useRef<HTMLElement>(null);
-
-  React.useEffect(() => {
-    checkUserSession().then(setIsLoggedIn);
-  }, [pathname]);
-
+  
   React.useEffect(() => {
     if (headerRef.current) {
       document.body.style.paddingTop = `${headerRef.current.offsetHeight}px`;
@@ -43,12 +36,6 @@ export function AppHeader() {
       document.body.style.paddingTop = '0';
     }
   }, []);
-
-  const onSignOut = async () => {
-    await handleSignOut();
-    setIsLoggedIn(false);
-    router.push('/signin');
-  }
 
   return (
     <header ref={headerRef} className="fixed top-0 left-0 right-0 z-50 glassmorphism">
@@ -72,20 +59,6 @@ export function AppHeader() {
                 {link.label}
               </Link>
             ))}
-             {isLoggedIn ? (
-              <Button variant="ghost" size="icon" onClick={onSignOut} title="Sign Out">
-                <LogOut className="h-5 w-5 text-white" />
-              </Button>
-            ) : (
-                <>
-                 <Link href="/signin" className="text-sm font-medium text-gray-300 hover:text-accent transition-colors">Sign In</Link>
-                 <Link href="/signup">
-                    <Button size="sm" className="font-bold bg-accent hover:bg-primary transition-all duration-300 transform hover:scale-105">
-                        Sign Up
-                    </Button>
-                </Link>
-                </>
-            )}
           </nav>
 
           <div className="md:hidden">
@@ -112,21 +85,6 @@ export function AppHeader() {
                 {link.label}
               </Link>
             ))}
-             {isLoggedIn ? (
-                <Button variant="ghost" onClick={() => { onSignOut(); setIsMenuOpen(false); }} className="text-gray-200 hover:text-accent">
-                    <LogOut className="mr-2 h-5 w-5" />
-                    Sign Out
-                </Button>
-            ) : (
-                <>
-                    <Link href="/signin" onClick={() => setIsMenuOpen(false)} className="text-lg font-medium text-gray-200 hover:text-accent transition-colors">Sign In</Link>
-                    <Link href="/signup" onClick={() => setIsMenuOpen(false)}>
-                        <Button size="sm" className="font-bold bg-accent hover:bg-primary transition-all duration-300">
-                            Sign Up
-                        </Button>
-                    </Link>
-                </>
-            )}
           </nav>
         </div>
       )}
