@@ -3,7 +3,7 @@
 /**
  * @fileOverview An AI agent for generating personalized strategy suggestions based on user goals.
  *
- * - generateStrategySuggestions - A function that generates strategy suggestions.
+ * - generateStrategySuggestionsFlow - A function that generates strategy suggestions.
  * - GenerateStrategySuggestionsInput - The input type for the generateStrategySuggestions function.
  * - GenerateStrategySuggestionsOutput - The return type for the generateStrategySuggestions function.
  */

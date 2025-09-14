@@ -53,11 +53,12 @@ export function GoalForm({ onStrategyUpdate, setIsLoading, isLoading, clearStrat
     
     try {
         const streamableValue = await handleGoalSubmission(values);
-        let fullResponse = "";
+        
+        let currentStrategy = "";
         for await (const delta of readStreamableValue(streamableValue)) {
             if (delta && typeof delta.strategySuggestions === 'string') {
-                fullResponse += delta.strategySuggestions;
-                onStrategyUpdate(fullResponse);
+                currentStrategy += delta.strategySuggestions;
+                onStrategyUpdate(currentStrategy);
             }
         }
     } catch(e) {
