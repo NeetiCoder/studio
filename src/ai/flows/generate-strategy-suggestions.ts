@@ -3,7 +3,7 @@
 /**
  * @fileOverview An AI agent for generating personalized strategy suggestions based on user goals.
  *
- * - generateStrategySuggestions - A function that generates strategy suggestions.
+ * - generateStrategySuggestionsFlow - A function that generates strategy suggestions.
  * - GenerateStrategySuggestionsInput - The input type for the generateStrategySuggestions function.
  * - GenerateStrategySuggestionsOutput - The return type for the generateStrategySuggestions function.
  */
@@ -23,11 +23,6 @@ const GenerateStrategySuggestionsOutputSchema = z.object({
   strategySuggestions: z.string().describe('AI-powered strategy suggestions based on the goal, timeframe, and details.'),
 });
 export type GenerateStrategySuggestionsOutput = z.infer<typeof GenerateStrategySuggestionsOutputSchema>;
-
-export async function generateStrategySuggestions(input: GenerateStrategySuggestionsInput) {
-    const { stream } = await generateStrategySuggestionsFlow(input);
-    return stream;
-}
 
 const generateStrategySuggestionsPrompt = ai.definePrompt({
   name: 'generateStrategySuggestionsPrompt',
@@ -56,7 +51,7 @@ A detailed, step-by-step roadmap. For each period (e.g., month), provide:
 Structure your response clearly. Use markdown for formatting, including headings for each period and bullet points for targets and actions. Make it motivating and encouraging.`,
 });
 
-const generateStrategySuggestionsFlow = ai.defineFlow(
+export const generateStrategySuggestionsFlow = ai.defineFlow(
   {
     name: 'generateStrategySuggestionsFlow',
     inputSchema: GenerateStrategySuggestionsInputSchema,

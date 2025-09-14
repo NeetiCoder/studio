@@ -1,6 +1,6 @@
 'use server';
 
-import { generateStrategySuggestions, type GenerateStrategySuggestionsInput } from '@/ai/flows/generate-strategy-suggestions';
+import { generateStrategySuggestionsFlow, type GenerateStrategySuggestionsInput } from '@/ai/flows/generate-strategy-suggestions';
 import { createStreamableValue } from 'ai/rsc';
 import { z } from 'zod';
 
@@ -23,7 +23,7 @@ export async function handleGoalSubmission(values: GenerateStrategySuggestionsIn
         }
 
         try {
-            const stream = await generateStrategySuggestions(parsed.data);
+            const stream = await generateStrategySuggestionsFlow(parsed.data);
             for await (const chunk of stream) {
                 if (chunk.strategySuggestions) {
                     streamable.update({ strategySuggestions: chunk.strategySuggestions });
