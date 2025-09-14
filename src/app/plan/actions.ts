@@ -7,6 +7,7 @@ const formSchema = z.object({
   goalType: z.string().min(2),
   timeFrame: z.enum(['monthly', 'yearly', 'custom']),
   details: z.string().min(10),
+  currentStatus: z.string().optional(),
 });
 
 export async function handleGoalSubmission(values: GenerateStrategySuggestionsInput) {

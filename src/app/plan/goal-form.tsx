@@ -13,6 +13,7 @@ import { useToast } from '@/hooks/use-toast';
 import type { GenerateStrategySuggestionsOutput } from '@/ai/flows/generate-strategy-suggestions';
 import { Loader2, Zap } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { useState } from 'react';
 
 const formSchema = z.object({
   goalType: z.string().min(2, {
@@ -22,6 +23,7 @@ const formSchema = z.object({
   details: z.string().min(10, {
     message: 'Please provide more details about your goal.',
   }),
+  currentStatus: z.string().optional(),
 });
 
 type GoalFormProps = {
@@ -31,12 +33,15 @@ type GoalFormProps = {
 
 export function GoalForm({ onStrategyGenerated, setIsLoading }: GoalFormProps) {
   const { toast } = useToast();
+  const [goalType, setGoalType] = useState('');
+  
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       goalType: '',
       timeFrame: 'monthly',
       details: '',
+      currentStatus: '',
     },
   });
 
@@ -64,6 +69,21 @@ export function GoalForm({ onStrategyGenerated, setIsLoading }: GoalFormProps) {
 
   const inputStyles = "bg-background/50 border-border/50 focus-visible:ring-accent focus-visible:ring-offset-0 focus:neon-border-glow transition-all";
 
+  const getPlaceholderForCurrentStatus = () => {
+    switch (goalType.toLowerCase()) {
+        case 'fitness':
+            return 'e.g., Current weight 90kg, height 6ft. I can do 5 pushups.';
+        case 'study':
+            return 'e.g., I am a 1st year computer science university student.';
+        case 'career':
+            return 'e.g., I am a Junior Software Engineer with 1 year of experience.';
+        case 'finance':
+            return 'e.g., I have $500 in savings and $2000 in debt.';
+        default:
+            return 'Describe your starting point.';
+    }
+  }
+
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 glassmorphism p-8 rounded-lg">
@@ -74,12 +94,41 @@ export function GoalForm({ onStrategyGenerated, setIsLoading }: GoalFormProps) {
             <FormItem>
               <FormLabel className="text-lg font-semibold text-gray-300">Goal Type</FormLabel>
               <FormControl>
-                <Input placeholder="e.g., Career, Fitness, Study" {...field} className={cn(inputStyles)} />
+                <Input 
+                  placeholder="e.g., Fitness, Study, Career" 
+                  {...field} 
+                  onChange={(e) => {
+                      field.onChange(e);
+                      setGoalType(e.target.value);
+                  }}
+                  className={cn(inputStyles)} 
+                />
               </FormControl>
               <FormMessage />
             </FormItem>
           )}
         />
+
+        {goalType && (
+           <FormField
+            control={form.control}
+            name="currentStatus"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel className="text-lg font-semibold text-gray-300">Current Status</FormLabel>
+                <FormControl>
+                  <Textarea
+                    placeholder={getPlaceholderForCurrentStatus()}
+                    className={cn(inputStyles, 'min-h-[100px]')}
+                    {...field}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        )}
+
         <FormField
           control={form.control}
           name="timeFrame"

@@ -15,6 +15,7 @@ const GenerateStrategySuggestionsInputSchema = z.object({
   goalType: z.string().describe('The type of goal (career, fitness, study, finance, personal growth, etc.)'),
   timeFrame: z.enum(['monthly', 'yearly', 'custom']).describe('The timeframe for the goal (monthly, yearly, or custom)'),
   details: z.string().describe('Specific details about the goal.'),
+  currentStatus: z.string().optional().describe('The user\'s current status, e.g., for fitness: current weight/height; for study: current grade/topic.'),
 });
 export type GenerateStrategySuggestionsInput = z.infer<typeof GenerateStrategySuggestionsInputSchema>;
 
@@ -31,14 +32,24 @@ const generateStrategySuggestionsPrompt = ai.definePrompt({
   name: 'generateStrategySuggestionsPrompt',
   input: {schema: GenerateStrategySuggestionsInputSchema},
   output: {schema: GenerateStrategySuggestionsOutputSchema},
-  prompt: `You are an AI assistant designed to provide personalized strategy suggestions based on user goals, timeframe, and details.
+  prompt: `You are an expert life coach and strategist. Your task is to create a detailed, actionable monthly roadmap for the user based on their goals.
 
-  Goal Type: {{{goalType}}}
-  Timeframe: {{{timeFrame}}}
-  Details: {{{details}}}
+Analyze the user's goal, their current status, and the timeframe. Then, generate a comprehensive plan.
 
-  Please generate a strategy plan with actionable steps.
-  Consider using a tool to incorporate domain-specific resources and planning strategies when helpful.`,
+**User's Goal:**
+- **Goal Type:** {{{goalType}}}
+- **Timeframe:** {{{timeFrame}}}
+- **Current Status:** {{#if currentStatus}} {{{currentStatus}}} {{else}} Not provided {{/if}}
+- **Goal Details:** {{{details}}}
+
+**Your Output Must Be:**
+A detailed, month-by-month roadmap. For each month, provide:
+1.  **A Clear Theme/Focus:** What is the main objective for that month?
+2.  **Specific, Measurable Targets:** List quantifiable targets (e.g., "Lose 2kg," "Complete 3 chapters," "Save $500").
+3.  **Actionable Steps:** Provide a list of concrete actions the user should take to achieve the targets.
+4.  **Milestones:** Define key milestones to track progress.
+
+Structure your response clearly. Use markdown for formatting, including headings for each month and bullet points for targets and actions. Make it motivating and encouraging.`,
 });
 
 const generateStrategySuggestionsFlow = ai.defineFlow(
