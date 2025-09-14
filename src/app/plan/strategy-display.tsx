@@ -24,30 +24,23 @@ export function StrategyDisplay({ strategy, isLoading }: StrategyDisplayProps) {
             </div>
         );
     }
-    
-    // Simple parsing of the strategy text. Assumes steps start with a number.
-    const steps = strategy.strategySuggestions.split('\n').filter(line => /^\d+\./.test(line.trim()));
 
     return (
-        <div>
-            <h2 className="font-headline text-3xl font-bold text-white mb-6">Your AI-Powered Strategy</h2>
-            <div className="space-y-4">
-                {steps.map((step, index) => (
-                    <Card 
-                        key={index}
-                        className="glassmorphism animate-fade-in-slide-up"
-                        style={{ animationDelay: `${index * 100}ms` }}
-                    >
-                        <CardHeader className="flex flex-row items-start gap-4">
-                            <div className="flex-shrink-0 w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center">
-                                <Lightbulb className="w-5 h-5 text-primary" />
-                            </div>
-                            <CardTitle className="text-lg text-gray-200 pt-1"><div>{step.replace(/^\d+\.\s*/, '')}</div></CardTitle>
-                        </CardHeader>
-                    </Card>
-                ))}
-            </div>
-        </div>
+        <Card className="glassmorphism animate-fade-in-slide-up w-full">
+            <CardHeader>
+                <CardTitle>
+                    <div className="flex items-center gap-3 font-headline text-3xl font-bold text-white">
+                        <Lightbulb className="w-8 h-8 text-primary" />
+                        Your AI-Powered Strategy
+                    </div>
+                </CardTitle>
+            </CardHeader>
+            <CardContent>
+                <div className="text-gray-300 whitespace-pre-wrap leading-relaxed">
+                    {strategy.strategySuggestions}
+                </div>
+            </CardContent>
+        </Card>
     );
 }
 

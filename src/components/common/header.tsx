@@ -11,7 +11,6 @@ const navLinks = [
   { href: '/', label: 'Home' },
   { href: '/plan', label: 'Create Plan' },
   { href: '/dashboard', label: 'Dashboard' },
-  { href: '/roadmap', label: 'Roadmap' },
 ];
 
 export function AppHeader() {
