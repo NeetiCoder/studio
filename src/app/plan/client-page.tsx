@@ -8,8 +8,8 @@ export function PlanClientPage() {
     const [strategy, setStrategy] = useState<string>('');
     const [isLoading, setIsLoading] = useState(false);
 
-    const handleStrategyUpdate = (newStrategyChunk: string) => {
-        setStrategy(prev => prev + newStrategyChunk);
+    const handleStrategyUpdate = (newStrategy: string) => {
+        setStrategy(newStrategy);
     }
 
     const clearStrategy = () => {

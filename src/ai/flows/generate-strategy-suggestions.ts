@@ -36,7 +36,7 @@ const generateStrategySuggestionsPrompt = ai.definePrompt({
   config: {
     maxOutputTokens: 8192,
   },
-  prompt: `You are an expert life coach and strategist. Your task is to create a detailed, actionable monthly roadmap for the user based on their goals.
+  prompt: `You are an expert life coach and strategist. Your task is to create a detailed, actionable roadmap for the user based on their goals.
 
 Analyze the user's goal, their current status, and the timeframe. Then, generate a comprehensive plan.
 
@@ -47,20 +47,19 @@ Analyze the user's goal, their current status, and the timeframe. Then, generate
 - **Goal Details:** {{{details}}}
 
 **Your Output Must Be:**
-A detailed, month-by-month roadmap. For each month, provide:
-1.  **A Clear Theme/Focus:** What is the main objective for that month?
+A detailed, step-by-step roadmap. For each period (e.g., month), provide:
+1.  **A Clear Theme/Focus:** What is the main objective for that period?
 2.  **Specific, Measurable Targets:** List quantifiable targets (e.g., "Lose 2kg," "Complete 3 chapters," "Save $500").
 3.  **Actionable Steps:** Provide a list of concrete actions the user should take to achieve the targets.
 4.  **Milestones:** Define key milestones to track progress.
 
-Structure your response clearly. Use markdown for formatting, including headings for each month and bullet points for targets and actions. Make it motivating and encouraging.`,
+Structure your response clearly. Use markdown for formatting, including headings for each period and bullet points for targets and actions. Make it motivating and encouraging.`,
 });
 
 const generateStrategySuggestionsFlow = ai.defineFlow(
   {
     name: 'generateStrategySuggestionsFlow',
     inputSchema: GenerateStrategySuggestionsInputSchema,
-    outputSchema: GenerateStrategySuggestionsOutputSchema,
     stream: {
       schema: z.object({
         strategySuggestions: z.string(),
