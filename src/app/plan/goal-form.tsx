@@ -50,32 +50,25 @@ export function GoalForm({ onStrategyUpdate, setIsLoading, isLoading, clearStrat
   async function onSubmit(values: z.infer<typeof formSchema>) {
     setIsLoading(true);
     clearStrategy();
-    const result = await handleGoalSubmission(values);
     
-    if (result.success && result.data) {
+    try {
+        const streamableValue = await handleGoalSubmission(values);
         let fullResponse = "";
-        try {
-            for await (const delta of readStreamableValue(result.data)) {
-                if (delta && typeof delta.strategySuggestions === 'string') {
-                    fullResponse += delta.strategySuggestions;
-                    onStrategyUpdate(fullResponse); // Send the full accumulated string
-                }
+        for await (const delta of readStreamableValue(streamableValue)) {
+            if (delta && typeof delta.strategySuggestions === 'string') {
+                fullResponse += delta.strategySuggestions;
+                onStrategyUpdate(fullResponse);
             }
-        } catch(e) {
-            toast({
-                title: "Error",
-                description: "There was an error generating your strategy. Please try again.",
-                variant: 'destructive',
-            });
         }
-    } else {
+    } catch(e) {
         toast({
             title: "Error",
-            description: result.error || "An unknown error occurred.",
+            description: "There was an error generating your strategy. Please try again.",
             variant: 'destructive',
         });
+    } finally {
+        setIsLoading(false);
     }
-    setIsLoading(false);
   }
 
   const getPlaceholder = () => {

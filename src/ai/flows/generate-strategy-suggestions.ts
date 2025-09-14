@@ -3,7 +3,7 @@
 /**
  * @fileOverview An AI agent for generating personalized strategy suggestions based on user goals.
  *
- * - generateStrategySuggestionsFlow - A function that generates strategy suggestions.
+ * - generateStrategySuggestions - A function that generates strategy suggestions.
  * - GenerateStrategySuggestionsInput - The input type for the generateStrategySuggestions function.
  * - GenerateStrategySuggestionsOutput - The return type for the generateStrategySuggestions function.
  */
@@ -55,6 +55,7 @@ export const generateStrategySuggestionsFlow = ai.defineFlow(
   {
     name: 'generateStrategySuggestionsFlow',
     inputSchema: GenerateStrategySuggestionsInputSchema,
+    outputSchema: GenerateStrategySuggestionsOutputSchema,
     stream: {
       schema: z.object({
         strategySuggestions: z.string(),

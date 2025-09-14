@@ -12,13 +12,13 @@ const formSchema = z.object({
 });
 
 export async function handleGoalSubmission(values: GenerateStrategySuggestionsInput) {
-    const streamable = createStreamableValue();
+    const result = createStreamableValue();
 
     (async () => {
         const parsed = formSchema.safeParse(values);
 
         if (!parsed.success) {
-            streamable.done({ success: false, error: "Invalid form data." });
+            result.done({ success: false, error: "Invalid form data." });
             return;
         }
 
@@ -26,17 +26,17 @@ export async function handleGoalSubmission(values: GenerateStrategySuggestionsIn
             const stream = await generateStrategySuggestionsFlow(parsed.data);
             for await (const chunk of stream) {
                 if (chunk.strategySuggestions) {
-                    streamable.update({ strategySuggestions: chunk.strategySuggestions });
+                    result.update({ strategySuggestions: chunk.strategySuggestions });
                 }
             }
         } catch (error) {
             console.error("Error generating strategy:", error);
-            streamable.done({ success: false, error: "Failed to generate strategy. Please try again." });
+            result.done({ success: false, error: "Failed to generate strategy. Please try again." });
             return;
         }
         
-        streamable.done({ success: true });
+        result.done({ success: true });
     })();
 
-    return { success: true, data: streamable.value };
+    return result.value;
 }
