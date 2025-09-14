@@ -1,7 +1,7 @@
 import { roadMapData } from './data';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
-import { Check, Milestone, PartyPopper } from 'lucide-react';
+import { Check, CheckCircle, Circle, Milestone, PartyPopper } from 'lucide-react';
 
 const getIcon = (status: string) => {
     switch (status) {
@@ -61,9 +61,20 @@ export default function RoadmapPage() {
                                     <CardTitle className="text-xl font-bold font-headline">{item.title}</CardTitle>
                                     <span className="text-xs uppercase font-semibold tracking-wider text-muted-foreground">{item.quarter}</span>
                                 </div>
+                                <CardDescription>{item.description}</CardDescription>
                             </CardHeader>
                             <CardContent>
-                                <p className="text-muted-foreground">{item.description}</p>
+                                <div className="space-y-3">
+                                    {item.tasks?.map((task, taskIndex) => (
+                                        <div key={taskIndex} className="flex items-start gap-3">
+                                            {task.done ? <CheckCircle className="w-5 h-5 text-green-400 mt-0.5 flex-shrink-0" /> : <Circle className="w-5 h-5 text-primary/50 mt-0.5 flex-shrink-0" />}
+                                            <div>
+                                                <h4 className="font-semibold text-gray-200">{task.name}</h4>
+                                                <p className="text-sm text-muted-foreground">{task.detail}</p>
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
                             </CardContent>
                         </Card>
                     </div>
