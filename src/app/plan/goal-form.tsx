@@ -52,13 +52,21 @@ export function GoalForm({ onStrategyUpdate, setIsLoading, isLoading, clearStrat
     clearStrategy();
     
     try {
-        const streamableValue = await handleGoalSubmission(values);
+        const { output } = await handleGoalSubmission(values);
         
-        let currentStrategy = "";
-        for await (const delta of readStreamableValue(streamableValue)) {
+        let fullResponse = "";
+        for await (const delta of readStreamableValue(output)) {
             if (delta && typeof delta.strategySuggestions === 'string') {
-                currentStrategy += delta.strategySuggestions;
-                onStrategyUpdate(currentStrategy);
+                fullResponse += delta.strategySuggestions;
+                onStrategyUpdate(fullResponse);
+            }
+             if (delta && typeof delta.error === 'string') {
+                toast({
+                    title: "Error",
+                    description: delta.error,
+                    variant: 'destructive',
+                });
+                break;
             }
         }
     } catch(e) {

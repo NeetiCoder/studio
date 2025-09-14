@@ -56,18 +56,9 @@ export const generateStrategySuggestionsFlow = ai.defineFlow(
     name: 'generateStrategySuggestionsFlow',
     inputSchema: GenerateStrategySuggestionsInputSchema,
     outputSchema: GenerateStrategySuggestionsOutputSchema,
-    stream: {
-      schema: z.object({
-        strategySuggestions: z.string(),
-      }),
-    },
   },
   async (input) => {
-    const { stream } = await generateStrategySuggestionsPrompt(input, { stream: true });
-
-    return stream.pipe(chunk => {
-        if (!chunk.output) return;
-        return { strategySuggestions: chunk.output.strategySuggestions };
-    });
+    const llmResponse = await generateStrategySuggestionsPrompt(input);
+    return llmResponse.output!;
   }
 );
