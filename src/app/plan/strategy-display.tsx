@@ -13,37 +13,51 @@ type StrategyDisplayProps = {
 
 // A simple markdown to React component renderer.
 const MarkdownRenderer = ({ content }: { content: string }) => {
+    const renderableContent = [];
     const lines = content.split('\n');
 
-    const renderLine = (line: string) => {
-        line = line.trim();
+    for (let i = 0; i < lines.length; i++) {
+        let line = lines[i];
 
         if (line.startsWith('### ')) {
-            return <h3 className="text-xl font-semibold mt-4 mb-2 text-primary">{line.substring(4)}</h3>;
+            renderableContent.push(<h3 key={i} className="text-xl font-semibold mt-4 mb-2 text-primary">{line.substring(4)}</h3>);
+        } else if (line.startsWith('## ')) {
+            renderableContent.push(<h2 key={i} className="text-2xl font-bold mt-6 mb-3 border-b-2 border-primary/30 pb-2">{line.substring(3)}</h2>);
+        } else if (line.startsWith('# ')) {
+            renderableContent.push(<h1 key={i} className="text-3xl font-bold mt-8 mb-4">{line.substring(2)}</h1>);
+        } else if (line.startsWith('* ')) {
+            const listItems = [];
+            while (i < lines.length && lines[i].startsWith('* ')) {
+                listItems.push(<li key={i} className="text-gray-300">{lines[i].substring(2)}</li>);
+                i++;
+            }
+            i--; // Decrement to account for the outer loop's increment
+            renderableContent.push(<ul key={`ul-${i}`} className="list-disc pl-5 my-2 space-y-1">{listItems}</ul>);
+        } else if (line.match(/^\d+\. /)) {
+            const listItems = [];
+            while (i < lines.length && lines[i].match(/^\d+\. /)) {
+                listItems.push(<li key={i} className="text-gray-300">{lines[i].substring(lines[i].indexOf(' ') + 1)}</li>);
+                i++;
+            }
+            i--; // Decrement to account for the outer loop's increment
+            renderableContent.push(<ol key={`ol-${i}`} className="list-decimal pl-5 my-2 space-y-1">{listItems}</ol>);
+        } else if (line.includes('**')) {
+            const parts = line.split('**');
+            renderableContent.push(
+                <p key={i}>
+                    {parts.map((part, index) =>
+                        index % 2 === 1 ? <strong key={index} className="font-bold text-white">{part}</strong> : <React.Fragment key={index}>{part}</React.Fragment>
+                    )}
+                </p>
+            );
+        } else if (line.trim() !== '') {
+            renderableContent.push(<p key={i} className="text-gray-400 my-1">{line}</p>);
         }
-        if (line.startsWith('## ')) {
-            return <h2 className="text-2xl font-bold mt-6 mb-3 border-b-2 border-primary/30 pb-2">{line.substring(3)}</h2>;
-        }
-        if (line.startsWith('# ')) {
-            return <h1 className="text-3xl font-bold mt-8 mb-4">{line.substring(2)}</h1>;
-        }
-        if (line.startsWith('* ')) {
-            return <li className="ml-5 list-disc text-gray-300">{line.substring(2)}</li>;
-        }
-        if (line.startsWith('1. ') || line.startsWith('2. ') || line.startsWith('3. ') || line.startsWith('4. ')) {
-            return <li className="ml-5 list-decimal text-gray-300">{line.substring(3)}</li>;
-        }
-        if (line.includes('**')) {
-             const parts = line.split('**');
-             return <p>{parts.map((part, i) => i % 2 === 1 ? <strong key={i} className="font-bold text-white">{part}</strong> : <React.Fragment key={i}>{part}</React.Fragment>)}</p>
-        }
-
-        return <p className="text-gray-400 my-1">{line}</p>;
-    };
+    }
 
     return (
         <div className="prose prose-invert">
-            {lines.map((line, index) => <div key={index}>{renderLine(line)}</div>)}
+            {renderableContent}
         </div>
     );
 };
