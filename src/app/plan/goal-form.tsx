@@ -14,6 +14,7 @@ import type { GenerateStrategySuggestionsOutput } from '@/ai/flows/generate-stra
 import { Loader2, Zap } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useState } from 'react';
+import { readStreamableValue } from 'ai/rsc';
 
 const formSchema = z.object({
   goalType: z.string().min(2, {
@@ -27,11 +28,12 @@ const formSchema = z.object({
 });
 
 type GoalFormProps = {
-    onStrategyGenerated: (strategy: GenerateStrategySuggestionsOutput) => void;
+    onStrategyUpdate: (strategy: GenerateStrategySuggestionsOutput) => void;
     setIsLoading: (isLoading: boolean) => void;
+    isLoading: boolean;
 }
 
-export function GoalForm({ onStrategyGenerated, setIsLoading }: GoalFormProps) {
+export function GoalForm({ onStrategyUpdate, setIsLoading, isLoading }: GoalFormProps) {
   const { toast } = useToast();
   const [goalType, setGoalType] = useState('');
   
@@ -45,138 +47,35 @@ export function GoalForm({ onStrategyGenerated, setIsLoading }: GoalFormProps) {
     },
   });
 
-  const isLoading = form.formState.isSubmitting;
-
   async function onSubmit(values: z.infer<typeof formSchema>) {
     setIsLoading(true);
     const result = await handleGoalSubmission(values);
-    setIsLoading(false);
     
     if (result.success && result.data) {
-      onStrategyGenerated(result.data);
-      toast({
-        title: "Strategy Generated!",
-        description: "Your new path to success is ready.",
-      });
-    } else {
-      toast({
-        variant: "destructive",
-        title: "Uh oh! Something went wrong.",
-        description: result.error || "There was a problem with your request.",
-      });
-    }
-  }
-
-  const inputStyles = "bg-background/50 border-border/50 focus-visible:ring-accent focus-visible:ring-offset-0 focus:neon-border-glow transition-all";
-
-  const getPlaceholderForCurrentStatus = () => {
-    switch (goalType.toLowerCase()) {
-        case 'fitness':
-            return 'e.g., Current weight 90kg, height 6ft. I can do 5 pushups.';
-        case 'study':
-            return 'e.g., I am a 1st year computer science university student.';
-        case 'career':
-            return 'e.g., I am a Junior Software Engineer with 1 year of experience.';
-        case 'finance':
-            return 'e.g., I have $500 in savings and $2000 in debt.';
-        default:
-            return 'Describe your starting point.';
-    }
-  }
-
-  return (
-    <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 glassmorphism p-8 rounded-lg">
-        <FormField
-          control={form.control}
-          name="goalType"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel className="text-lg font-semibold text-gray-300">Goal Type</FormLabel>
-              <FormControl>
-                <Input 
-                  placeholder="e.g., Fitness, Study, Career" 
-                  {...field} 
-                  onChange={(e) => {
-                      field.onChange(e);
-                      setGoalType(e.target.value);
-                  }}
-                  className={cn(inputStyles)} 
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
-        {goalType && (
-           <FormField
-            control={form.control}
-            name="currentStatus"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel className="text-lg font-semibold text-gray-300">Current Status</FormLabel>
-                <FormControl>
-                  <Textarea
-                    placeholder={getPlaceholderForCurrentStatus()}
-                    className={cn(inputStyles, 'min-h-[100px]')}
-                    {...field}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-        )}
-
-        <FormField
-          control={form.control}
-          name="timeFrame"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel className="text-lg font-semibold text-gray-300">Time Frame</FormLabel>
-                <Select onValueChange={field.onChange} defaultValue={field.value}>
-                  <FormControl>
-                    <SelectTrigger className={cn(inputStyles)}>
-                        <SelectValue placeholder="Select a time frame" />
-                    </SelectTrigger>
-                  </FormControl>
-                  <SelectContent className='glassmorphism'>
-                    <SelectItem value="monthly">Monthly</SelectItem>
-                    <SelectItem value="yearly">Yearly</SelectItem>
-                    <SelectItem value="custom">Custom</SelectItem>
-                  </SelectContent>
-                </Select>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="details"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel className="text-lg font-semibold text-gray-300">Goal Details</FormLabel>
-              <FormControl>
-                <Textarea
-                  placeholder="Describe your goal in detail. What does success look like?"
-                  className={cn(inputStyles, 'min-h-[120px]')}
-                  {...field}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <Button type="submit" disabled={isLoading} className="w-full text-lg font-bold bg-accent hover:bg-primary transition-all duration-300 transform hover:scale-105 neon-border-glow">
-          {isLoading ? (
-            <Loader2 className="mr-2 h-5 w-5 animate-spin" />
-          ) : (
-            <Zap className="mr-2 h-5 w-5" />
-          )}
-          Generate Strategy
-        </Button>
-      </form>
-    </Form>
-  );
-}
+        let finalState: any = {};
+        for await (const-child in a list should have a unique "key" prop.
+> 
+> Check the render method of `MarkdownRenderer`. See https://react.dev/link/warning-keys for more information.. Error source: src/app/plan/strategy-display.tsx (40:35) @ <anonymous>
+> 
+>   38 |         const listItems = [];
+>   39 |         while (i < lines.length && lines[i].startsWith('* ')) {
+> > 40 |             listItems.push(<li>{lines[i].substring(2)}</li>);
+>      |                                   ^
+>   41 |             i++;
+>   42 |         }
+>   43 |         i--; // Decrement to account for the outer loop's increment
+> 
+> Call Stack
+> 29
+> 
+> Show 19 ignore-listed frame(s)
+> <unknown>
+> src/app/plan/strategy-display.tsx (40:35)
+> MarkdownRenderer
+> src/app/plan/strategy-display.tsx (39:13)
+> StrategyDisplay
+> src/app/plan/strategy-display.tsx (88:20)
+> PlanClientPage
+> src/app/plan/client-page.tsx (18:17)
+> PlanPage
+> src/app/plan/page.tsx (15:17)

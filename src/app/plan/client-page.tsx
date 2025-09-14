@@ -9,21 +9,18 @@ export function PlanClientPage() {
     const [strategy, setStrategy] = useState<GenerateStrategySuggestionsOutput | null>(null);
     const [isLoading, setIsLoading] = useState(false);
 
-    const handleStrategyGenerated = (newStrategy: GenerateStrategySuggestionsOutput) => {
+    const handleStrategyUpdate = (newStrategy: GenerateStrategySuggestionsOutput) => {
         setStrategy(newStrategy);
     }
-
+    
     return (
         <div className="flex flex-col lg:flex-row gap-16">
             <div className="lg:w-1/3">
                 <GoalForm 
-                    onStrategyGenerated={handleStrategyGenerated}
+                    onStrategyUpdate={handleStrategyUpdate}
                     setIsLoading={setIsLoading}
+                    isLoading={isLoading}
                 />
             </div>
             <div className="lg:w-2/3">
-                <StrategyDisplay strategy={strategy} isLoading={isLoading} />
-            </div>
-        </div>
-    );
-}
+                <StrategyDisplay strategy={strategy} isLoading={isLoading

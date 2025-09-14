@@ -24,8 +24,11 @@ const GenerateStrategySuggestionsOutputSchema = z.object({
 });
 export type GenerateStrategySuggestionsOutput = z.infer<typeof GenerateStrategySuggestionsOutputSchema>;
 
-export async function generateStrategySuggestions(input: GenerateStrategySuggestionsInput): Promise<GenerateStrategySuggestionsOutput> {
-  return generateStrategySuggestionsFlow(input);
+export async function generateStrategySuggestions(input: GenerateStrategySuggestionsInput, onUpdate: (chunk: string) => void): Promise<void> {
+  const {stream} = await generateStrategySuggestionsFlow(input);
+  for await (const chunk of stream) {
+    onUpdate(chunk.output!.strategySuggestions);
+  }
 }
 
 const generateStrategySuggestionsPrompt = ai.definePrompt({
@@ -60,9 +63,4 @@ const generateStrategySuggestionsFlow = ai.defineFlow(
     name: 'generateStrategySuggestionsFlow',
     inputSchema: GenerateStrategySuggestionsInputSchema,
     outputSchema: GenerateStrategySuggestionsOutputSchema,
-  },
-  async input => {
-    const {output} = await generateStrategySuggestionsPrompt(input);
-    return output!;
-  }
-);
+    stream:
