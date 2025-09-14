@@ -4,6 +4,7 @@ import { Inter, Space_Grotesk } from 'next/font/google';
 import { cn } from '@/lib/utils';
 import { AppHeader } from '@/components/common/header';
 import { Toaster } from "@/components/ui/toaster";
+import { ThreeBackground } from '@/components/common/three-background';
 
 const fontBody = Inter({ 
   subsets: ['latin'],
@@ -34,9 +35,12 @@ export default function RootLayout({
           fontHeadline.variable
         )}
       >
-        <AppHeader />
-        <main>{children}</main>
-        <Toaster />
+        <ThreeBackground />
+        <div className="relative z-10">
+          <AppHeader />
+          <main>{children}</main>
+          <Toaster />
+        </div>
       </body>
     </html>
   );

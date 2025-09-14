@@ -1,6 +1,5 @@
 'use client';
 
-import { ThreeBackground } from '@/components/common/three-background';
 import { Button } from '@/components/ui/button';
 import { ArrowRight } from 'lucide-react';
 import Link from 'next/link';
@@ -8,7 +7,6 @@ import Link from 'next/link';
 export default function Home() {
   return (
     <div className="relative flex h-screen w-full flex-col items-center justify-center overflow-hidden">
-      <ThreeBackground />
       <div className="relative z-10 flex flex-col items-center justify-center text-center p-4">
         <h1 className="font-headline text-5xl md:text-7xl lg:text-8xl font-bold tracking-tighter mb-6 animated-gradient-text">
           Plan Your Goals, Achieve Your Future
