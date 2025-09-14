@@ -10,7 +10,6 @@ import { Button } from '@/components/ui/button';
 const navLinks = [
   { href: '/', label: 'Home' },
   { href: '/plan', label: 'Create Plan' },
-  { href: '/dashboard', label: 'Dashboard' },
 ];
 
 export function AppHeader() {
