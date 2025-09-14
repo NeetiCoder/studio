@@ -10,7 +10,6 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Textarea } from '@/components/ui/textarea';
 import { handleGoalSubmission } from './actions';
 import { useToast } from '@/hooks/use-toast';
-import type { GenerateStrategySuggestionsOutput } from '@/ai/flows/generate-strategy-suggestions';
 import { Loader2, Zap } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useState } from 'react';
@@ -28,12 +27,13 @@ const formSchema = z.object({
 });
 
 type GoalFormProps = {
-    onStrategyUpdate: (strategy: GenerateStrategySuggestionsOutput) => void;
+    onStrategyUpdate: (strategyChunk: string) => void;
     setIsLoading: (isLoading: boolean) => void;
     isLoading: boolean;
+    clearStrategy: () => void;
 }
 
-export function GoalForm({ onStrategyUpdate, setIsLoading, isLoading }: GoalFormProps) {
+export function GoalForm({ onStrategyUpdate, setIsLoading, isLoading, clearStrategy }: GoalFormProps) {
   const { toast } = useToast();
   const [goalType, setGoalType] = useState('');
   
@@ -49,33 +49,143 @@ export function GoalForm({ onStrategyUpdate, setIsLoading, isLoading }: GoalForm
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     setIsLoading(true);
+    clearStrategy();
     const result = await handleGoalSubmission(values);
     
     if (result.success && result.data) {
-        let finalState: any = {};
-        for await (const-child in a list should have a unique "key" prop.
-> 
-> Check the render method of `MarkdownRenderer`. See https://react.dev/link/warning-keys for more information.. Error source: src/app/plan/strategy-display.tsx (40:35) @ <anonymous>
-> 
->   38 |         const listItems = [];
->   39 |         while (i < lines.length && lines[i].startsWith('* ')) {
-> > 40 |             listItems.push(<li>{lines[i].substring(2)}</li>);
->      |                                   ^
->   41 |             i++;
->   42 |         }
->   43 |         i--; // Decrement to account for the outer loop's increment
-> 
-> Call Stack
-> 29
-> 
-> Show 19 ignore-listed frame(s)
-> <unknown>
-> src/app/plan/strategy-display.tsx (40:35)
-> MarkdownRenderer
-> src/app/plan/strategy-display.tsx (39:13)
-> StrategyDisplay
-> src/app/plan/strategy-display.tsx (88:20)
-> PlanClientPage
-> src/app/plan/client-page.tsx (18:17)
-> PlanPage
-> src/app/plan/page.tsx (15:17)
+        try {
+            for await (const delta of readStreamableValue(result.data)) {
+                if (delta.strategySuggestions) {
+                    onStrategyUpdate(delta.strategySuggestions);
+                }
+            }
+        } catch(e) {
+            toast({
+                title: "Error",
+                description: "There was an error generating your strategy. Please try again.",
+                variant: 'destructive',
+            });
+        }
+    } else {
+        toast({
+            title: "Error",
+            description: result.error || "An unknown error occurred.",
+            variant: 'destructive',
+        });
+    }
+    setIsLoading(false);
+  }
+
+  const getPlaceholder = () => {
+    switch (goalType.toLowerCase()) {
+      case 'fitness':
+        return 'e.g., current weight, height, workout frequency';
+      case 'career':
+        return 'e.g., current job title, years of experience';
+      case 'study':
+        return 'e.g., current grade, subjects, study habits';
+      case 'finance':
+        return 'e.g., current savings, income, financial goals';
+      default:
+        return 'e.g., current situation, skills, or progress';
+    }
+  };
+
+  return (
+    <Form {...form}>
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 glassmorphism p-6 rounded-lg">
+        <FormField
+          control={form.control}
+          name="goalType"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel className="text-white">Goal Type</FormLabel>
+              <Input 
+                placeholder="e.g., Fitness, Career, Study" 
+                {...field}
+                onChange={(e) => {
+                    field.onChange(e);
+                    setGoalType(e.target.value);
+                }}
+                className="bg-gray-800/60 border-gray-700 text-white placeholder:text-gray-400"
+              />
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="timeFrame"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel className="text-white">Time Frame</FormLabel>
+              <Select onValueChange={field.onChange} defaultValue={field.value}>
+                <FormControl>
+                  <SelectTrigger className="bg-gray-800/60 border-gray-700 text-white">
+                    <SelectValue placeholder="Select a time frame" />
+                  </SelectTrigger>
+                </FormControl>
+                <SelectContent className="bg-gray-900 text-white border-gray-700">
+                  <SelectItem value="monthly">Monthly</SelectItem>
+                  <SelectItem value="yearly">Yearly</SelectItem>
+                  <SelectItem value="custom">Custom</SelectItem>
+                </SelectContent>
+              </Select>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="details"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel className="text-white">Goal Details</FormLabel>
+              <Textarea
+                placeholder="Describe your goal in detail. What do you want to achieve?"
+                {...field}
+                className="bg-gray-800/60 border-gray-700 text-white placeholder:text-gray-400"
+              />
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="currentStatus"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel className="text-white">Current Status (Optional)</FormLabel>
+              <Input 
+                placeholder={getPlaceholder()}
+                {...field}
+                className="bg-gray-800/60 border-gray-700 text-white placeholder:text-gray-400"
+              />
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <Button 
+            type="submit" 
+            className={cn(
+                "w-full font-bold text-lg bg-accent hover:bg-primary transition-all duration-300 transform hover:scale-105 neon-border-glow",
+                { 'opacity-50 cursor-not-allowed': isLoading }
+            )}
+            disabled={isLoading}
+        >
+            {isLoading ? (
+                <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Generating...
+                </>
+            ) : (
+                <>
+                    <Zap className="mr-2 h-5 w-5" />
+                    Generate My Strategy
+                </>
+            )}
+        </Button>
+      </form>
+    </Form>
+  );
+}

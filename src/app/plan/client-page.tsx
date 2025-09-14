@@ -3,14 +3,17 @@
 import { useState } from 'react';
 import { GoalForm } from './goal-form';
 import { StrategyDisplay } from './strategy-display';
-import type { GenerateStrategySuggestionsOutput } from '@/ai/flows/generate-strategy-suggestions';
 
 export function PlanClientPage() {
-    const [strategy, setStrategy] = useState<GenerateStrategySuggestionsOutput | null>(null);
+    const [strategy, setStrategy] = useState<string>('');
     const [isLoading, setIsLoading] = useState(false);
 
-    const handleStrategyUpdate = (newStrategy: GenerateStrategySuggestionsOutput) => {
-        setStrategy(newStrategy);
+    const handleStrategyUpdate = (newStrategyChunk: string) => {
+        setStrategy(prev => prev + newStrategyChunk);
+    }
+
+    const clearStrategy = () => {
+        setStrategy('');
     }
     
     return (
@@ -20,7 +23,12 @@ export function PlanClientPage() {
                     onStrategyUpdate={handleStrategyUpdate}
                     setIsLoading={setIsLoading}
                     isLoading={isLoading}
+                    clearStrategy={clearStrategy}
                 />
             </div>
             <div className="lg:w-2/3">
-                <StrategyDisplay strategy={strategy} isLoading={isLoading
+                <StrategyDisplay strategy={strategy} isLoading={isLoading} />
+            </div>
+        </div>
+    );
+}

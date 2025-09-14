@@ -23,9 +23,12 @@ export async function handleGoalSubmission(values: GenerateStrategySuggestionsIn
         }
 
         try {
-            await generateStrategySuggestions(parsed.data, (chunk) => {
-                streamable.update({ strategySuggestions: chunk });
-            });
+            const stream = await generateStrategySuggestions(parsed.data);
+            for await (const chunk of stream) {
+                if (chunk.strategySuggestions) {
+                    streamable.update({ strategySuggestions: chunk.strategySuggestions });
+                }
+            }
         } catch (error) {
             console.error("Error generating strategy:", error);
             streamable.done({ success: false, error: "Failed to generate strategy. Please try again." });

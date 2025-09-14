@@ -1,13 +1,12 @@
 
 'use client';
 
-import type { GenerateStrategySuggestionsOutput } from "@/ai/flows/generate-strategy-suggestions";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Lightbulb, Rocket } from "lucide-react";
 import React from "react";
 
 type StrategyDisplayProps = {
-    strategy: GenerateStrategySuggestionsOutput | null;
+    strategy: string;
     isLoading: boolean;
 };
 
@@ -28,7 +27,7 @@ const MarkdownRenderer = ({ content }: { content: string }) => {
         } else if (line.startsWith('* ')) {
             const listItems = [];
             while (i < lines.length && lines[i].startsWith('* ')) {
-                listItems.push(<li key={i} className="text-gray-300">{lines[i].substring(2)}</li>);
+                listItems.push(<li key={`li-${i}`} className="text-gray-300">{lines[i].substring(2)}</li>);
                 i++;
             }
             i--; // Decrement to account for the outer loop's increment
@@ -36,7 +35,7 @@ const MarkdownRenderer = ({ content }: { content: string }) => {
         } else if (line.match(/^\d+\. /)) {
             const listItems = [];
             while (i < lines.length && lines[i].match(/^\d+\. /)) {
-                listItems.push(<li key={i} className="text-gray-300">{lines[i].substring(lines[i].indexOf(' ') + 1)}</li>);
+                listItems.push(<li key={`li-${i}`} className="text-gray-300">{lines[i].substring(lines[i].indexOf(' ') + 1)}</li>);
                 i++;
             }
             i--; // Decrement to account for the outer loop's increment
@@ -64,7 +63,7 @@ const MarkdownRenderer = ({ content }: { content: string }) => {
 
 
 export function StrategyDisplay({ strategy, isLoading }: StrategyDisplayProps) {
-    if (isLoading) {
+    if (isLoading && !strategy) {
         return (
              <div className="flex flex-col items-center justify-center text-center p-8 h-full glassmorphism rounded-lg animate-pulse">
                 <Rocket className="w-16 h-16 text-accent mb-4 animate-bounce" />
@@ -74,7 +73,7 @@ export function StrategyDisplay({ strategy, isLoading }: StrategyDisplayProps) {
         );
     }
 
-    if (!strategy) {
+    if (!strategy && !isLoading) {
         return (
             <div className="flex flex-col items-center justify-center text-center p-8 h-full glassmorphism rounded-lg">
                 <Rocket className="w-16 h-16 text-accent mb-4" />
@@ -96,7 +95,7 @@ export function StrategyDisplay({ strategy, isLoading }: StrategyDisplayProps) {
             </CardHeader>
             <CardContent>
                 <div className="text-gray-300 whitespace-pre-wrap leading-relaxed">
-                   <MarkdownRenderer content={strategy.strategySuggestions} />
+                   <MarkdownRenderer content={strategy} />
                 </div>
             </CardContent>
         </Card>
