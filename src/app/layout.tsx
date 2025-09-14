@@ -36,9 +36,9 @@ export default function RootLayout({
         )}
       >
         <ThreeBackground />
-        <div className="relative z-10">
+        <div className="relative z-10 flex flex-col min-h-screen">
           <AppHeader />
-          <main>{children}</main>
+          <main className="flex-grow">{children}</main>
           <Toaster />
         </div>
       </body>
