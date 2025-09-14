@@ -32,6 +32,9 @@ const generateStrategySuggestionsPrompt = ai.definePrompt({
   name: 'generateStrategySuggestionsPrompt',
   input: {schema: GenerateStrategySuggestionsInputSchema},
   output: {schema: GenerateStrategySuggestionsOutputSchema},
+  config: {
+    maxOutputTokens: 8192,
+  },
   prompt: `You are an expert life coach and strategist. Your task is to create a detailed, actionable monthly roadmap for the user based on their goals.
 
 Analyze the user's goal, their current status, and the timeframe. Then, generate a comprehensive plan.
